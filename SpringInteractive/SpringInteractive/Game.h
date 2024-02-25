@@ -35,10 +35,11 @@ private:
 	void setupSprite();
 	void setUpRadio();
 	void setUpDials();
+	void setUpPlayRadio();
+	void setUpPlayButton();
 
 	sf::RenderWindow m_window; // main SFML window
 	sf::Font m_ArialBlackfont; // font used by message
-	sf::Text m_welcomeMessage; // text used for message on screen
 	bool m_exitGame; // control exiting game
 
 	sf::Sprite m_radioSprite; //sprite for radio

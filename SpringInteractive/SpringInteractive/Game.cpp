@@ -21,9 +21,11 @@ Game::Game() :
 	m_exitGame{false} //when true game will exit
 {
 	setupFontAndText(); // load font 
-	setupSprite(); // load background texture
+	setupSprite(); // load background and board texture
 	setUpRadio(); //load radio texture
 	setUpDials(); //load dials texture
+	setUpPlayRadio(); //load play radio button texture
+	setUpPlayButton(); //load play sound button texture
 }
 
 /// <summary>
@@ -117,7 +119,9 @@ void Game::render()
 	m_window.draw(m_radioSprite);
 	m_window.draw(m_dialInstSprite);
 	m_window.draw(m_dialPitchSprite);
-	m_window.draw(m_welcomeMessage);
+	m_window.draw(m_boardSprite);
+	m_window.draw(m_radioPlaySprite);
+	m_window.draw(m_playSoundSprite);
 	m_window.display();
 }
 
@@ -130,15 +134,6 @@ void Game::setupFontAndText()
 	{
 		std::cout << "problem loading arial black font" << std::endl;
 	}
-	m_welcomeMessage.setFont(m_ArialBlackfont);
-	m_welcomeMessage.setString("SFML Game");
-	m_welcomeMessage.setStyle(sf::Text::Underlined | sf::Text::Italic | sf::Text::Bold);
-	m_welcomeMessage.setPosition(40.0f, 40.0f);
-	m_welcomeMessage.setCharacterSize(80U);
-	m_welcomeMessage.setOutlineColor(sf::Color::Red);
-	m_welcomeMessage.setFillColor(sf::Color::Black);
-	m_welcomeMessage.setOutlineThickness(3.0f);
-
 }
 
 /// <summary>
@@ -153,6 +148,14 @@ void Game::setupSprite()
 	m_backgroundSprite.setTexture(m_backgroundTexture);
 	m_backgroundSprite.setTextureRect(sf::IntRect{ 0, 0, m_WIDTH, m_HEIGHT});
 	m_backgroundSprite.setScale(4.0f, 4.0f);
+
+	if (!m_boardTexture.loadFromFile("ASSETS\\IMAGES\\board.png"))
+	{
+		std::cout << "problem loading board.png" << std::endl;
+	}
+	m_boardSprite.setTexture(m_boardTexture);
+	m_boardSprite.setScale(4.0f, 4.0f);
+	m_boardSprite.setPosition(50.0f, 300.0f);
 }
 
 /// <summary>
@@ -189,4 +192,26 @@ void Game::setUpDials()
 	m_dialPitchSprite.setTexture(m_dialPitchTexture);
 	m_dialPitchSprite.setScale(4.0f, 4.0f);
 	m_dialPitchSprite.setPosition(475.0f, 340.0f);
+}
+
+void Game::setUpPlayRadio()
+{
+	if (!m_radioPlayTexture.loadFromFile("ASSETS\\IMAGES\\playRadio.png"))
+	{
+		std::cout << "problem loading playRadio.png" << std::endl;
+	}
+	m_radioPlaySprite.setTexture(m_radioPlayTexture);
+	m_radioPlaySprite.setScale(4.0f, 4.0f);
+	m_radioPlaySprite.setPosition(568.0f, 290.0f);
+}
+
+void Game::setUpPlayButton()
+{
+	if (!m_playSoundTexture.loadFromFile("ASSETS\\IMAGES\\playSound.png"))
+	{
+		std::cout << "problem loading playSound.png" << std::endl;
+	}
+	m_playSoundSprite.setTexture(m_playSoundTexture);
+	m_playSoundSprite.setScale(4.0f, 4.0f);
+	m_playSoundSprite.setPosition(135.0f, 400.0f);
 }
