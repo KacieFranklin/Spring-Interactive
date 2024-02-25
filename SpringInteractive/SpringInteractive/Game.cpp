@@ -26,6 +26,7 @@ Game::Game() :
 	setUpDials(); //load dials texture
 	setUpPlayRadio(); //load play radio button texture
 	setUpPlayButton(); //load play sound button texture
+	setUpSlider(); //load slider texture
 }
 
 /// <summary>
@@ -122,6 +123,7 @@ void Game::render()
 	m_window.draw(m_boardSprite);
 	m_window.draw(m_radioPlaySprite);
 	m_window.draw(m_playSoundSprite);
+	m_window.draw(m_sliderSprite);
 	m_window.display();
 }
 
@@ -194,6 +196,9 @@ void Game::setUpDials()
 	m_dialPitchSprite.setPosition(475.0f, 340.0f);
 }
 
+/// <summary>
+/// set up play radio button sprite, texture and position
+/// </summary>
 void Game::setUpPlayRadio()
 {
 	if (!m_radioPlayTexture.loadFromFile("ASSETS\\IMAGES\\playRadio.png"))
@@ -205,6 +210,9 @@ void Game::setUpPlayRadio()
 	m_radioPlaySprite.setPosition(568.0f, 290.0f);
 }
 
+/// <summary>
+/// set up play sound button sprite, texture and position
+/// </summary>
 void Game::setUpPlayButton()
 {
 	if (!m_playSoundTexture.loadFromFile("ASSETS\\IMAGES\\playSound.png"))
@@ -214,4 +222,20 @@ void Game::setUpPlayButton()
 	m_playSoundSprite.setTexture(m_playSoundTexture);
 	m_playSoundSprite.setScale(4.0f, 4.0f);
 	m_playSoundSprite.setPosition(135.0f, 400.0f);
+}
+
+/// <summary>
+/// set up slider sprite, texture and position
+/// </summary>
+void Game::setUpSlider()
+{
+	if (!m_sliderTexture.loadFromFile("ASSETS\\IMAGES\\slider.png"))
+	{
+		std::cout << "problem loading slider.png" << std::endl;
+	}
+	m_sliderSprite.setTexture(m_sliderTexture);
+	m_sliderSprite.setScale(3.0f, 3.0f);
+	m_sliderSprite.setRotation(90.0f);
+	m_sliderSprite.setPosition(568.0f, 405.0f);
+
 }

@@ -37,6 +37,7 @@ private:
 	void setUpDials();
 	void setUpPlayRadio();
 	void setUpPlayButton();
+	void setUpSlider();
 
 	sf::RenderWindow m_window; // main SFML window
 	sf::Font m_ArialBlackfont; // font used by message
@@ -56,6 +57,9 @@ private:
 	sf::Texture m_backgroundTexture; //texture for background
 	sf::Sprite m_playSoundSprite; //sprite for play sound button
 	sf::Texture m_playSoundTexture; //texture for play sound button
+
+	sf::Sprite m_sliderSprite; //sprite for slider
+	sf::Texture m_sliderTexture; //texture for slider
 };
 
 #endif // !GAME_HPP
