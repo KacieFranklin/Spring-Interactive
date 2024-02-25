@@ -17,11 +17,13 @@
 /// load and setup thne image
 /// </summary>
 Game::Game() :
-	m_window{ sf::VideoMode{ 800U, 600U, 32U }, "SFML Game" },
+	m_window{ sf::VideoMode{ m_WIDTH, m_HEIGHT, 32U }, "SFML Game" },
 	m_exitGame{false} //when true game will exit
 {
 	setupFontAndText(); // load font 
-	setupSprite(); // load texture
+	setupSprite(); // load background texture
+	setUpRadio(); //load radio texture
+	setUpDials(); //load dials texture
 }
 
 /// <summary>
@@ -111,6 +113,10 @@ void Game::update(sf::Time t_deltaTime)
 void Game::render()
 {
 	m_window.clear(sf::Color::White);
+	m_window.draw(m_backgroundSprite);
+	m_window.draw(m_radioSprite);
+	m_window.draw(m_dialInstSprite);
+	m_window.draw(m_dialPitchSprite);
 	m_window.draw(m_welcomeMessage);
 	m_window.display();
 }
@@ -136,8 +142,51 @@ void Game::setupFontAndText()
 }
 
 /// <summary>
-/// load the texture and setup the sprite for the logo
+/// load the texture and setup the sprite for the background
 /// </summary>
 void Game::setupSprite()
 {
+	if (!m_backgroundTexture.loadFromFile("ASSETS\\IMAGES\\background.png"))
+	{
+		std::cout << "problem loading background.png" << std::endl;
+	}
+	m_backgroundSprite.setTexture(m_backgroundTexture);
+	m_backgroundSprite.setTextureRect(sf::IntRect{ 0, 0, m_WIDTH, m_HEIGHT});
+	m_backgroundSprite.setScale(4.0f, 4.0f);
+}
+
+/// <summary>
+/// sets up the radio sprite and texture
+/// </summary>
+void Game::setUpRadio()
+{
+	if (!m_radioTexture.loadFromFile("ASSETS\\IMAGES\\radio.png"))
+	{
+		std::cout << "problem loading radio.png" << std::endl;
+	}
+	m_radioSprite.setTexture(m_radioTexture);
+	m_radioSprite.setPosition(400.0f, 125.0f);
+	m_radioSprite.setScale(4.0f, 4.0f);
+}
+
+/// <summary>
+/// sets up the textures and sprites for the dials
+/// </summary>
+void Game::setUpDials()
+{
+	if (!m_dialInstTexture.loadFromFile("ASSETS\\IMAGES\\dial.png"))
+	{
+		std::cout << "problem loading dial.png" << std::endl;
+	}
+	m_dialInstSprite.setTexture(m_dialInstTexture);
+	m_dialInstSprite.setScale(4.0f, 4.0f);
+	m_dialInstSprite.setPosition(725.0f, 340.0f);
+
+	if (!m_dialPitchTexture.loadFromFile("ASSETS\\IMAGES\\dial.png"))
+	{
+		std::cout << "problem loading dial.png" << std::endl;
+	}
+	m_dialPitchSprite.setTexture(m_dialPitchTexture);
+	m_dialPitchSprite.setScale(4.0f, 4.0f);
+	m_dialPitchSprite.setPosition(475.0f, 340.0f);
 }
