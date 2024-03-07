@@ -120,6 +120,7 @@ void Game::update(sf::Time t_deltaTime)
 	{
 		m_window.close();
 	}
+	m_playButtonCooldown++;
 	
 }
 
@@ -278,6 +279,11 @@ void Game::processMouseDown(sf::Event t_event)
 	{
 		clicked = ObjectPressed::DialLeft;
 	}
+	if (m_radioPlaySprite.getGlobalBounds().contains(m_mouseEnd) && m_playButtonCooldown > 30)
+	{
+		m_radioPlaySprite.setColor(sf::Color::Black);
+		m_playButtonCooldown = 0;
+	}
 }
 
 /// <summary>
@@ -288,6 +294,7 @@ void Game::processMouseUp(sf::Event t_event)
 {
 	m_mouseHeld = false;
 	clicked = ObjectPressed::None;
+	m_radioPlaySprite.setColor(sf::Color::White);
 }
 
 

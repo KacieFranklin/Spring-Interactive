@@ -78,6 +78,7 @@ private:
 	bool m_mouseHeld = false; //bool to check if the mouse if held down
 
 	ObjectPressed clicked = ObjectPressed::None;
+	int m_playButtonCooldown = 0;
 };
 
 #endif // !GAME_HPP
