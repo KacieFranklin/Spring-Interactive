@@ -38,6 +38,9 @@ private:
 	void setUpPlayRadio();
 	void setUpPlayButton();
 	void setUpSlider();
+	void processMouseDown(sf::Event t_event);
+	void processMouseUp(sf::Event t_event);
+	void processMouseMove(sf::Event t_event);
 
 	sf::RenderWindow m_window; // main SFML window
 	sf::Font m_ArialBlackfont; // font used by message
@@ -60,6 +63,9 @@ private:
 
 	sf::Sprite m_sliderSprite; //sprite for slider
 	sf::Texture m_sliderTexture; //texture for slider
+
+	sf::Vector2f m_mouseEnd;
+	bool m_mouseHeld = false; //bool to check if the mouse if held down
 };
 
 #endif // !GAME_HPP

@@ -82,6 +82,18 @@ void Game::processEvents()
 		{
 			processKeys(newEvent);
 		}
+		if (sf::Event::MouseMoved == newEvent.type)
+		{
+			processMouseMove(newEvent);
+		}
+		if (sf::Event::MouseButtonPressed == newEvent.type)
+		{
+			processMouseDown(newEvent);
+		}
+		if (sf::Event::MouseButtonReleased == newEvent.type)
+		{
+			processMouseUp(newEvent);
+		}
 	}
 }
 
@@ -108,6 +120,7 @@ void Game::update(sf::Time t_deltaTime)
 	{
 		m_window.close();
 	}
+	
 }
 
 /// <summary>
@@ -124,6 +137,7 @@ void Game::render()
 	m_window.draw(m_radioPlaySprite);
 	m_window.draw(m_playSoundSprite);
 	m_window.draw(m_sliderSprite);
+	
 	m_window.display();
 }
 
@@ -143,7 +157,7 @@ void Game::setupFontAndText()
 /// </summary>
 void Game::setupSprite()
 {
-	if (!m_backgroundTexture.loadFromFile("ASSETS\\IMAGES\\background.png"))
+	if (!m_backgroundTexture.loadFromFile("ASSETS\\IMAGES\\background.png")) //load texture
 	{
 		std::cout << "problem loading background.png" << std::endl;
 	}
@@ -151,7 +165,7 @@ void Game::setupSprite()
 	m_backgroundSprite.setTextureRect(sf::IntRect{ 0, 0, m_WIDTH, m_HEIGHT});
 	m_backgroundSprite.setScale(4.0f, 4.0f);
 
-	if (!m_boardTexture.loadFromFile("ASSETS\\IMAGES\\board.png"))
+	if (!m_boardTexture.loadFromFile("ASSETS\\IMAGES\\board.png")) //load texture
 	{
 		std::cout << "problem loading board.png" << std::endl;
 	}
@@ -165,7 +179,7 @@ void Game::setupSprite()
 /// </summary>
 void Game::setUpRadio()
 {
-	if (!m_radioTexture.loadFromFile("ASSETS\\IMAGES\\radio.png"))
+	if (!m_radioTexture.loadFromFile("ASSETS\\IMAGES\\radio.png")) //load texture
 	{
 		std::cout << "problem loading radio.png" << std::endl;
 	}
@@ -179,21 +193,23 @@ void Game::setUpRadio()
 /// </summary>
 void Game::setUpDials()
 {
-	if (!m_dialInstTexture.loadFromFile("ASSETS\\IMAGES\\dial.png"))
+	if (!m_dialInstTexture.loadFromFile("ASSETS\\IMAGES\\dial.png")) //load texture
 	{
 		std::cout << "problem loading dial.png" << std::endl;
 	}
 	m_dialInstSprite.setTexture(m_dialInstTexture);
 	m_dialInstSprite.setScale(4.0f, 4.0f);
-	m_dialInstSprite.setPosition(725.0f, 340.0f);
+	m_dialInstSprite.setOrigin(7, 6.5);
+	m_dialInstSprite.setPosition(755.0f, 365.0f);
 
-	if (!m_dialPitchTexture.loadFromFile("ASSETS\\IMAGES\\dial.png"))
+	if (!m_dialPitchTexture.loadFromFile("ASSETS\\IMAGES\\dial.png")) //load texture
 	{
 		std::cout << "problem loading dial.png" << std::endl;
 	}
 	m_dialPitchSprite.setTexture(m_dialPitchTexture);
 	m_dialPitchSprite.setScale(4.0f, 4.0f);
-	m_dialPitchSprite.setPosition(475.0f, 340.0f);
+	m_dialPitchSprite.setOrigin(7, 6.5);
+	m_dialPitchSprite.setPosition(505.0f, 365.0f);
 }
 
 /// <summary>
@@ -201,7 +217,7 @@ void Game::setUpDials()
 /// </summary>
 void Game::setUpPlayRadio()
 {
-	if (!m_radioPlayTexture.loadFromFile("ASSETS\\IMAGES\\playRadio.png"))
+	if (!m_radioPlayTexture.loadFromFile("ASSETS\\IMAGES\\playRadio.png")) //load texture
 	{
 		std::cout << "problem loading playRadio.png" << std::endl;
 	}
@@ -215,7 +231,7 @@ void Game::setUpPlayRadio()
 /// </summary>
 void Game::setUpPlayButton()
 {
-	if (!m_playSoundTexture.loadFromFile("ASSETS\\IMAGES\\playSound.png"))
+	if (!m_playSoundTexture.loadFromFile("ASSETS\\IMAGES\\playSound.png")) //load texture
 	{
 		std::cout << "problem loading playSound.png" << std::endl;
 	}
@@ -229,7 +245,7 @@ void Game::setUpPlayButton()
 /// </summary>
 void Game::setUpSlider()
 {
-	if (!m_sliderTexture.loadFromFile("ASSETS\\IMAGES\\slider.png"))
+	if (!m_sliderTexture.loadFromFile("ASSETS\\IMAGES\\slider.png")) // load texture
 	{
 		std::cout << "problem loading slider.png" << std::endl;
 	}
@@ -238,4 +254,50 @@ void Game::setUpSlider()
 	m_sliderSprite.setRotation(90.0f);
 	m_sliderSprite.setPosition(568.0f, 405.0f);
 
+}
+
+/// <summary>
+/// processes hen the mouse is held down
+/// </summary>
+/// <param name="t_event"></param>
+void Game::processMouseDown(sf::Event t_event)
+{ 
+	m_mouseHeld = true;
+	m_mouseEnd.x = static_cast<float>(t_event.mouseButton.x);
+	m_mouseEnd.y = static_cast<float>(t_event.mouseButton.y);
+}
+
+/// <summary>
+/// processes when the mouse is released
+/// </summary>
+/// <param name="t_event"></param>
+void Game::processMouseUp(sf::Event t_event)
+{
+	m_mouseHeld = false;
+}
+
+
+/// <summary>
+/// processes the mouse moving on the screen, 
+/// when held down on the slider it can be moved.
+/// </summary>
+/// <param name="t_event"></param>
+void Game::processMouseMove(sf::Event t_event)
+{
+	m_mouseEnd.x = static_cast<float>(t_event.mouseMove.x);
+	m_mouseEnd.y = static_cast<float>(t_event.mouseMove.y);
+	sf::Vector2f location = { m_mouseEnd.x, m_sliderSprite.getPosition().y };
+	if (m_mouseHeld == true)
+	{
+		if (location.x < 550) //stops the slider from going under 550
+		{
+			location.x = 550;
+		}
+		if (location.x > 710) //stops the slider from going over 710
+		{
+			location.x = 710;
+		}
+		m_sliderSprite.setPosition(location);
+
+	}
 }
