@@ -284,6 +284,11 @@ void Game::processMouseDown(sf::Event t_event)
 		m_radioPlaySprite.setColor(sf::Color::Black);
 		m_playButtonCooldown = 0;
 	}
+	if (m_playSoundSprite.getGlobalBounds().contains(m_mouseEnd) && m_playButtonCooldown > 30)
+	{
+		m_playSoundSprite.setColor(sf::Color::Black);
+		m_playButtonCooldown = 0;
+	}
 }
 
 /// <summary>
@@ -295,6 +300,7 @@ void Game::processMouseUp(sf::Event t_event)
 	m_mouseHeld = false;
 	clicked = ObjectPressed::None;
 	m_radioPlaySprite.setColor(sf::Color::White);
+	m_playSoundSprite.setColor(sf::Color::White);
 }
 
 
