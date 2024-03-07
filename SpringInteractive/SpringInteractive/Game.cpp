@@ -265,6 +265,19 @@ void Game::processMouseDown(sf::Event t_event)
 	m_mouseHeld = true;
 	m_mouseEnd.x = static_cast<float>(t_event.mouseButton.x);
 	m_mouseEnd.y = static_cast<float>(t_event.mouseButton.y);
+	sf::FloatRect sliderBounds = { 550.f, m_sliderSprite.getPosition().y, 160.f, m_sliderSprite.getGlobalBounds().height };
+	if (sliderBounds.contains(m_mouseEnd)) 
+	{
+		clicked = ObjectPressed::Slider;
+	}
+	if (m_dialInstSprite.getGlobalBounds().contains(m_mouseEnd))
+	{
+		clicked = ObjectPressed::DialRight;
+	}
+	if (m_dialPitchSprite.getGlobalBounds().contains(m_mouseEnd))
+	{
+		clicked = ObjectPressed::DialLeft;
+	}
 }
 
 /// <summary>
@@ -274,6 +287,7 @@ void Game::processMouseDown(sf::Event t_event)
 void Game::processMouseUp(sf::Event t_event)
 {
 	m_mouseHeld = false;
+	clicked = ObjectPressed::None;
 }
 
 
@@ -286,18 +300,41 @@ void Game::processMouseMove(sf::Event t_event)
 {
 	m_mouseEnd.x = static_cast<float>(t_event.mouseMove.x);
 	m_mouseEnd.y = static_cast<float>(t_event.mouseMove.y);
-	sf::Vector2f location = { m_mouseEnd.x, m_sliderSprite.getPosition().y };
+	
 	if (m_mouseHeld == true)
 	{
-		if (location.x < 550) //stops the slider from going under 550
+		if (clicked == ObjectPressed::Slider) 
 		{
-			location.x = 550;
+			sf::Vector2f location = { m_mouseEnd.x, m_sliderSprite.getPosition().y };
+			if (location.x < 550) //stops the slider from going under 550
+			{
+				location.x = 550;
+			}
+			if (location.x > 710) //stops the slider from going over 710
+			{
+				location.x = 710;
+			}
+			m_sliderSprite.setPosition(location);
 		}
-		if (location.x > 710) //stops the slider from going over 710
+		sf::Vector2f displacement;
+		float angleR;
+		float angleD;
+		if (clicked == ObjectPressed::DialRight) 
 		{
-			location.x = 710;
+			
+			displacement = m_dialInstSprite.getPosition() - m_mouseEnd;
+			angleR = std::atan2(displacement.y, displacement.x);
+			angleD = angleR * 180.0f / 3.14f;
+			angleD = (static_cast<int>(angleD + 179) / 90 + 1) * 90;
+			m_dialInstSprite.setRotation(angleD);
 		}
-		m_sliderSprite.setPosition(location);
-
+		if (clicked == ObjectPressed::DialLeft)
+		{
+			displacement = m_dialPitchSprite.getPosition() - m_mouseEnd;
+			angleR = std::atan2(displacement.y, displacement.x);
+			angleD = angleR * 180.0f / 3.14f;
+			angleD = (static_cast<int>(angleD + 179) / 90 + 1) * 90;
+			m_dialPitchSprite.setRotation(angleD);
+		}
 	}
 }

@@ -14,6 +14,16 @@
 const int m_HEIGHT = 600;
 const int m_WIDTH = 1000;
 
+enum class ObjectPressed
+{
+	None,
+	DialRight,
+	DialLeft,
+	PlayRadio,
+	PlaySound,
+	Slider
+};
+
 class Game
 {
 public:
@@ -66,6 +76,8 @@ private:
 
 	sf::Vector2f m_mouseEnd;
 	bool m_mouseHeld = false; //bool to check if the mouse if held down
+
+	ObjectPressed clicked = ObjectPressed::None;
 };
 
 #endif // !GAME_HPP
