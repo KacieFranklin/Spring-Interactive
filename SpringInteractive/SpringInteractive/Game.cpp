@@ -27,6 +27,7 @@ Game::Game() :
 	setUpPlayRadio(); //load play radio button texture
 	setUpPlayButton(); //load play sound button texture
 	setUpSlider(); //load slider texture
+	loadInstrumentBuffers(); //load buffers and default to guitar
 }
 
 /// <summary>
@@ -94,6 +95,7 @@ void Game::processEvents()
 		{
 			processMouseUp(newEvent);
 		}
+
 	}
 }
 
@@ -108,6 +110,22 @@ void Game::processKeys(sf::Event t_event)
 	{
 		m_exitGame = true;
 	}
+	if (sf::Keyboard::G == t_event.key.code)
+	{
+		setGuitar();
+	}
+	if (sf::Keyboard::F == t_event.key.code)
+	{
+		setFlute();
+	}
+	if (sf::Keyboard::P == t_event.key.code)
+	{
+		setPiano();
+	}
+	if (sf::Keyboard::D == t_event.key.code)
+	{
+		setUpDrum();
+	}
 }
 
 /// <summary>
@@ -120,8 +138,8 @@ void Game::update(sf::Time t_deltaTime)
 	{
 		m_window.close();
 	}
-	m_playButtonCooldown++;
-	
+	checkPitch();
+	releaseButtons();
 }
 
 /// <summary>
@@ -258,7 +276,8 @@ void Game::setUpSlider()
 }
 
 /// <summary>
-/// processes hen the mouse is held down
+/// processes w
+/// hen the mouse is held down
 /// </summary>
 /// <param name="t_event"></param>
 void Game::processMouseDown(sf::Event t_event)
@@ -266,28 +285,32 @@ void Game::processMouseDown(sf::Event t_event)
 	m_mouseHeld = true;
 	m_mouseEnd.x = static_cast<float>(t_event.mouseButton.x);
 	m_mouseEnd.y = static_cast<float>(t_event.mouseButton.y);
-	sf::FloatRect sliderBounds = { 550.f, m_sliderSprite.getPosition().y, 160.f, m_sliderSprite.getGlobalBounds().height };
-	if (sliderBounds.contains(m_mouseEnd)) 
+	sf::FloatRect sliderBounds = { 535.f, m_sliderSprite.getPosition().y, 177.f, m_sliderSprite.getGlobalBounds().height };//sets the bounds of the slider bar to check if the mouse is in correct range
+	if (sliderBounds.contains(m_mouseEnd)) //checks if the mouse is in the same position as sliderBounds
 	{
 		clicked = ObjectPressed::Slider;
 	}
-	if (m_dialInstSprite.getGlobalBounds().contains(m_mouseEnd))
+	if (m_dialInstSprite.getGlobalBounds().contains(m_mouseEnd))//checks if the mouse is in the same position as the dial
 	{
 		clicked = ObjectPressed::DialRight;
 	}
-	if (m_dialPitchSprite.getGlobalBounds().contains(m_mouseEnd))
+	if (m_dialPitchSprite.getGlobalBounds().contains(m_mouseEnd))//checks if the mouse is in the same position as the dial
 	{
 		clicked = ObjectPressed::DialLeft;
 	}
-	if (m_radioPlaySprite.getGlobalBounds().contains(m_mouseEnd) && m_playButtonCooldown > 30)
-	{
+	
+	if (m_radioPlaySprite.getGlobalBounds().contains(m_mouseEnd) && m_playButtonCooldown > 30)//checks if the mouse is in the same position as the radio play button
+	{	
+		clicked = ObjectPressed::PlayRadio;
 		m_radioPlaySprite.setColor(sf::Color::Black);
-		m_playButtonCooldown = 0;
+		m_playButtonCooldown = 0;//goes back to zero
+		
+		
 	}
-	if (m_playSoundSprite.getGlobalBounds().contains(m_mouseEnd) && m_playButtonCooldown > 30)
+	if (m_playSoundSprite.getGlobalBounds().contains(m_mouseEnd) && m_playButtonCooldown > 30)//checks if the mouse is in the same position as the play sound button
 	{
 		m_playSoundSprite.setColor(sf::Color::Black);
-		m_playButtonCooldown = 0;
+		m_playButtonCooldown = 0;//goes back to zero
 	}
 }
 
@@ -298,25 +321,32 @@ void Game::processMouseDown(sf::Event t_event)
 void Game::processMouseUp(sf::Event t_event)
 {
 	m_mouseHeld = false;
+	if (clicked == ObjectPressed::PlayRadio) 
+	{
+		m_sound.play();
+	}
+	if (clicked == ObjectPressed::DialRight) 
+	{
+		checkInstrument();
+	}
 	clicked = ObjectPressed::None;
-	m_radioPlaySprite.setColor(sf::Color::White);
-	m_playSoundSprite.setColor(sf::Color::White);
 }
 
 
 /// <summary>
 /// processes the mouse moving on the screen, 
-/// when held down on the slider it can be moved.
+/// when held down on the slider it can be moved,
+/// when held down it can rotate the dials.
 /// </summary>
 /// <param name="t_event"></param>
 void Game::processMouseMove(sf::Event t_event)
 {
 	m_mouseEnd.x = static_cast<float>(t_event.mouseMove.x);
 	m_mouseEnd.y = static_cast<float>(t_event.mouseMove.y);
-	
+
 	if (m_mouseHeld == true)
 	{
-		if (clicked == ObjectPressed::Slider) 
+		if (clicked == ObjectPressed::Slider)
 		{
 			sf::Vector2f location = { m_mouseEnd.x, m_sliderSprite.getPosition().y };
 			if (location.x < 550) //stops the slider from going under 550
@@ -332,13 +362,13 @@ void Game::processMouseMove(sf::Event t_event)
 		sf::Vector2f displacement;
 		float angleR;
 		float angleD;
-		if (clicked == ObjectPressed::DialRight) 
+		if (clicked == ObjectPressed::DialRight)
 		{
-			
+
 			displacement = m_dialInstSprite.getPosition() - m_mouseEnd;
 			angleR = std::atan2(displacement.y, displacement.x);
 			angleD = angleR * 180.0f / 3.14f;
-			angleD = (static_cast<int>(angleD + 179) / 90 + 1) * 90;
+			angleD = (static_cast<int>(angleD + 179) / 90 + 1) * 90; //makes the dial rotate 90 degrees
 			m_dialInstSprite.setRotation(angleD);
 		}
 		if (clicked == ObjectPressed::DialLeft)
@@ -346,8 +376,123 @@ void Game::processMouseMove(sf::Event t_event)
 			displacement = m_dialPitchSprite.getPosition() - m_mouseEnd;
 			angleR = std::atan2(displacement.y, displacement.x);
 			angleD = angleR * 180.0f / 3.14f;
-			angleD = (static_cast<int>(angleD + 179) / 90 + 1) * 90;
+			angleD = (static_cast<int>(angleD + 179) / 90 + 1) * 90; //makes the dial rotate 90 degrees
 			m_dialPitchSprite.setRotation(angleD);
 		}
+	}
+}
+
+/// <summary>
+/// Checks what the instrument is based on the right dial's rotation.
+/// </summary>
+void Game::checkInstrument()
+{
+	if (m_dialInstSprite.getRotation() == 0)
+	{
+		setGuitar();
+	}
+	if (m_dialInstSprite.getRotation() == 90)
+	{
+		setFlute();
+	}
+	if (m_dialInstSprite.getRotation() == 180)
+	{
+		setPiano();
+	}
+	if (m_dialInstSprite.getRotation() == 270)
+	{
+		setUpDrum();
+	}
+}
+
+/// <summary>
+/// Loads the buffers for the instruments
+/// </summary>
+void Game::loadInstrumentBuffers()
+{
+	if (!m_bufferG.loadFromFile("ASSETS\\SOUNDS\\GuitarC.wav"))
+	{
+		std::cout << "problem loading guitarC.wav";
+	}
+	if (!m_bufferD.loadFromFile("ASSETS\\SOUNDS\\DrumHiHat.wav"))
+	{
+		std::cout << "problem loading drumHiHat.wav";
+	}
+	if (!m_bufferF.loadFromFile("ASSETS\\SOUNDS\\FluteC.wav"))
+	{
+		std::cout << "problem loading fluteC.wav";
+	}
+	if (!m_bufferP.loadFromFile("ASSETS\\SOUNDS\\PianoC.wav"))
+	{
+		std::cout << "problem loading pianoC.wav";
+	}
+	m_sound.setBuffer(m_bufferG);
+}
+
+/// <summary>
+/// sets up the guitar and its different notes
+/// </summary>
+void Game::setGuitar()
+{
+	m_sound.setBuffer(m_bufferG);
+	//m_sound.play();
+}
+
+/// <summary>
+/// sets up the flute and its different notes
+/// </summary>
+void Game::setFlute()
+{
+	m_sound.setBuffer(m_bufferF);
+	//m_sound.play();
+}
+
+/// <summary>
+/// sets up the piano and its different notes
+/// </summary>
+void Game::setPiano()
+{
+	
+	m_sound.setBuffer(m_bufferP);
+	//m_sound.play();
+}
+
+/// <summary>
+/// sets up the drum and its different notes
+/// </summary>
+void Game::setUpDrum()
+{
+	m_sound.setBuffer(m_bufferD);
+	//m_sound.play();
+}
+
+/// <summary>
+/// checks the rotation of the pitch dial and alters the pitch of the sound
+/// </summary>
+void Game::checkPitch()
+{
+	if (m_dialPitchSprite.getRotation() == 90)
+	{
+		m_sound.setPitch(2.0f);
+	}
+	if (m_dialPitchSprite.getRotation() == 270)
+	{
+		m_sound.setPitch(0.75f);
+	}
+}
+
+/// <summary>
+/// keeps the buttons blacked out until they can be pressed again
+/// </summary>
+void Game::releaseButtons()
+{
+	if (m_playButtonCooldown <= 30) 
+	{
+		m_playButtonCooldown++;
+	}
+	else 
+	{
+		m_radioPlaySprite.setColor(sf::Color::White);//reverts to its original color
+		m_playSoundSprite.setColor(sf::Color::White);//reverts to its original color	
 	}
 }

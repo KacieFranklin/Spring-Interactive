@@ -10,6 +10,7 @@
 /// Don't forget the endif at the bottom
 /// </summary>
 #include <SFML/Graphics.hpp>
+#include<SFML/Audio.hpp>
 
 const int m_HEIGHT = 600;
 const int m_WIDTH = 1000;
@@ -51,6 +52,14 @@ private:
 	void processMouseDown(sf::Event t_event);
 	void processMouseUp(sf::Event t_event);
 	void processMouseMove(sf::Event t_event);
+	void checkInstrument();
+	void loadInstrumentBuffers();
+	void setGuitar();
+	void setFlute();
+	void setPiano();
+	void setUpDrum();
+	void checkPitch();
+	void releaseButtons();
 
 	sf::RenderWindow m_window; // main SFML window
 	sf::Font m_ArialBlackfont; // font used by message
@@ -78,7 +87,13 @@ private:
 	bool m_mouseHeld = false; //bool to check if the mouse if held down
 
 	ObjectPressed clicked = ObjectPressed::None;
-	int m_playButtonCooldown = 0;
+	int m_playButtonCooldown = 0; 
+
+	sf::Sound m_sound;
+	sf::SoundBuffer m_bufferG;
+	sf::SoundBuffer m_bufferF;
+	sf::SoundBuffer m_bufferP;
+	sf::SoundBuffer m_bufferD;
 };
 
 #endif // !GAME_HPP
