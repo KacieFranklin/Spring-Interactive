@@ -54,6 +54,7 @@ private:
 	void processMouseMove(sf::Event t_event);
 	void checkInstrument();
 	void loadInstrumentBuffers();
+	void loadNoteBuffers();
 	void setGuitar();
 	void setFlute();
 	void setPiano();
@@ -94,6 +95,11 @@ private:
 	sf::SoundBuffer m_bufferF;
 	sf::SoundBuffer m_bufferP;
 	sf::SoundBuffer m_bufferD;
+	
+	sf::SoundBuffer m_bufferG2;
+	sf::SoundBuffer m_bufferF2;
+	sf::SoundBuffer m_bufferP2;
+	sf::SoundBuffer m_bufferD2;
 };
 
 #endif // !GAME_HPP

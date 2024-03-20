@@ -28,6 +28,7 @@ Game::Game() :
 	setUpPlayButton(); //load play sound button texture
 	setUpSlider(); //load slider texture
 	loadInstrumentBuffers(); //load buffers and default to guitar
+	loadNoteBuffers(); //loads the second note for the instruments
 }
 
 /// <summary>
@@ -277,7 +278,7 @@ void Game::setUpSlider()
 
 /// <summary>
 /// processes w
-/// hen the mouse is held down
+/// when the mouse is held down
 /// </summary>
 /// <param name="t_event"></param>
 void Game::processMouseDown(sf::Event t_event)
@@ -285,6 +286,7 @@ void Game::processMouseDown(sf::Event t_event)
 	m_mouseHeld = true;
 	m_mouseEnd.x = static_cast<float>(t_event.mouseButton.x);
 	m_mouseEnd.y = static_cast<float>(t_event.mouseButton.y);
+	std::cout << "" << m_sliderSprite.getPosition().x;
 	sf::FloatRect sliderBounds = { 535.f, m_sliderSprite.getPosition().y, 177.f, m_sliderSprite.getGlobalBounds().height };//sets the bounds of the slider bar to check if the mouse is in correct range
 	if (sliderBounds.contains(m_mouseEnd)) //checks if the mouse is in the same position as sliderBounds
 	{
@@ -429,13 +431,41 @@ void Game::loadInstrumentBuffers()
 	m_sound.setBuffer(m_bufferG);
 }
 
+void Game::loadNoteBuffers()
+{
+	if (!m_bufferG2.loadFromFile("ASSETS\\SOUNDS\\guitar2.wav"))
+	{
+		std::cout << "problem loading guitar2.wav";
+	}
+	if (!m_bufferF2.loadFromFile("ASSETS\\SOUNDS\\flute2.wav"))
+	{
+		std::cout << "problem loading flute2.wav";
+	}
+	if (!m_bufferP2.loadFromFile("ASSETS\\SOUNDS\\piano2.wav"))
+	{
+		std::cout << "problem loading piano2.wav";
+	}
+	if (!m_bufferD2.loadFromFile("ASSETS\\SOUNDS\\drum2.wav"))
+	{
+		std::cout << "problem loading drum2.wav";
+	}
+}
+
 /// <summary>
 /// sets up the guitar and its different notes
 /// </summary>
 void Game::setGuitar()
 {
-	m_sound.setBuffer(m_bufferG);
+	
 	//m_sound.play();
+	if (m_sliderSprite.getPosition().x >= 550 && m_sliderSprite.getPosition().x <= 627)
+	{
+		m_sound.setBuffer(m_bufferG2);
+	}
+	else
+	{
+		m_sound.setBuffer(m_bufferG);
+	}
 }
 
 /// <summary>
@@ -443,8 +473,16 @@ void Game::setGuitar()
 /// </summary>
 void Game::setFlute()
 {
-	m_sound.setBuffer(m_bufferF);
+	
 	//m_sound.play();
+	if (m_sliderSprite.getPosition().x >= 550 && m_sliderSprite.getPosition().x <= 627)
+	{
+		//m_sound.setBuffer(m_bufferF2);
+	}
+	else
+	{
+		m_sound.setBuffer(m_bufferF);
+	}
 }
 
 /// <summary>
@@ -453,8 +491,15 @@ void Game::setFlute()
 void Game::setPiano()
 {
 	
-	m_sound.setBuffer(m_bufferP);
 	//m_sound.play();
+	if (m_sliderSprite.getPosition().x >= 550 && m_sliderSprite.getPosition().x <= 627)
+	{
+		m_sound.setBuffer(m_bufferP2);
+	}
+	if(m_sliderSprite.getPosition().x >= 628 && m_sliderSprite.getPosition().x <= 710)
+	{
+		m_sound.setBuffer(m_bufferP);
+	}
 }
 
 /// <summary>
@@ -462,8 +507,18 @@ void Game::setPiano()
 /// </summary>
 void Game::setUpDrum()
 {
-	m_sound.setBuffer(m_bufferD);
+	
 	//m_sound.play();
+	
+	if (m_sliderSprite.getPosition().x >= 550 && m_sliderSprite.getPosition().x <= 627)
+	{
+		m_sound.setBuffer(m_bufferD2);
+	}
+	else
+	{
+		m_sound.setBuffer(m_bufferD);
+	}
+	
 }
 
 /// <summary>
@@ -475,10 +530,15 @@ void Game::checkPitch()
 	{
 		m_sound.setPitch(2.0f);
 	}
-	if (m_dialPitchSprite.getRotation() == 270)
+	else if (m_dialPitchSprite.getRotation() == 270)
 	{
-		m_sound.setPitch(0.75f);
+		m_sound.setPitch(0.25f);
 	}
+	else
+	{
+		m_sound.setPitch(1.0f);
+	}
+	
 }
 
 /// <summary>
